@@ -50,6 +50,14 @@ RUN set -ex \
         rsync \
         netcat \
         locales \
+        r-base \
+        unixodbc \
+        unixodbc-dev \
+        tdsodbc \
+        odbc-postgresql \
+        libsqliteodbc \
+        libmyodbc \
+        vim \
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
     && locale-gen \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
@@ -71,13 +79,14 @@ RUN set -ex \
         /var/tmp/* \
         /usr/share/man \
         /usr/share/doc \
-        /usr/share/doc-base
+        /usr/share/doc-base 
+
 
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_USER_HOME}/airflow.cfg
 
 RUN chown -R airflow: ${AIRFLOW_USER_HOME}
-
+RUN R -e "install.packages('ggplot2',dependencies=TRUE, repos='http://cran.rstudio.com/')"
 EXPOSE 8080 5555 8793
 
 USER airflow
